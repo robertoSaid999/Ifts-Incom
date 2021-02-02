@@ -1,3 +1,4 @@
+
 // Example testing sketch for various DHT humidity/temperature sensors
 // Written by ladyada, public domain
 
@@ -53,7 +54,7 @@ void loop() {
   //float f = dht.readTemperature(true);
 
   // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t)) {
+  if (isnan(dht.readTemperature()) || isnan(dht.readHumidity())) {
     Serial.println(F("Failed to read from DHT sensor!"));
     return;
   }
@@ -61,7 +62,7 @@ void loop() {
   // Compute heat index in Fahrenheit (the default)
   //float hif = dht.computeHeatIndex(f, h);
   // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
+  float hic = dht.computeHeatIndex(dht.readTemperature(), dht.readHumidity(), false);
 
   //Serial.print(F("Humidity: "));
   Serial.print(h);
