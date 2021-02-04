@@ -6,7 +6,7 @@
 // - DHT Sensor Library: https://github.com/adafruit/DHT-sensor-library
 // - Adafruit Unified Sensor Lib: https://github.com/adafruit/Adafruit_Sensor
 
-#include "DHT.h"
+#include <DHT.h>
 
 #define DHTPIN 2     // Digital pin connected to the DHT sensor
 // Feather HUZZAH ESP8266 note: use pins 3, 4, 5, 12, 13 or 14 --
@@ -24,20 +24,27 @@
 // Connect pin 4 (on the right) of the sensor to GROUND
 // Connect a 10K resistor from pin 2 (data) to pin 1 (power) of the sensor
 
+
+//temperatura di scambio
+#define TEMPERATURA 23
+#define ISTERESI 1
+
+bool stato;
 // Initialize DHT sensor.
 // Note that older versions of this library took an optional third parameter to
 // tweak the timings for faster processors.  This parameter is no longer needed
 // as the current DHT reading algorithm adjusts itself to work on faster procs.
-DHT dht(DHTPIN, DHTTYPE);
+DHT dht(2, DHT11);
 
 void setup() {
   Serial.begin(9600);
  //Serial.println(F("DHTxx test!"));
   dht.begin();
-  Serial.print("Humidity:\t");
-  Serial.print("Temperature:\t");
-  Serial.println("Heat_index: ");
-
+  Serial.print(F("Humidity:\t"));
+  Serial.print(F("Temperature:\t"));
+  Serial.print(F("Heat_index:\t"));
+  Serial.println(F("Stato:"));
+  pinMode(LED_BUILTIN,OUTPUT);
  
 }
 
@@ -53,6 +60,7 @@ void loop() {
   // Read temperature as Fahrenheit (isFahrenheit = true)
   //float f = dht.readTemperature(true);
 
+  
   // Check if any reads failed and exit early (to try again).
   if (isnan(dht.readTemperature()) || isnan(dht.readHumidity())) {
     Serial.println(F("Failed to read from DHT sensor!"));
@@ -71,8 +79,20 @@ void loop() {
   Serial.print(t);
   Serial.print("\t\t");
   //Serial.print(F("Heat index: "));
-  Serial.println(hic);
+  Serial.print(hic);
+   Serial.print("\t\t");
   //Serial.print(F("°C\t"));
   //Serial.println(hif);
   //Serial.println(F("°F\t"));
+
+  if(t<TEMPERATURA - (ISTERESI/2)){
+    stato=true;
+    digitalWrite(LED_BUILTIN,stato);
+  }
+  else if (t>TEMPERATURA+(ISTERESI/2)){
+   stato=false;
+   digitalWrite(LED_BUILTIN,stato);
+  }
+ 
+  Serial.println(stato);
 }
